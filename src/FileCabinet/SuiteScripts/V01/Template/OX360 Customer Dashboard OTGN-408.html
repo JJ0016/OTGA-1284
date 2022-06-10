@@ -1,0 +1,2562 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>OX360 Customer Dashboard Report</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!--bootstrap.min.css-->
+    <link rel="stylesheet"
+          href="https://3425005.app.netsuite.com/core/media/media.nl?id=25767756&c=3425005&h=Q8FEuZJfLxTRZ1ctRjLVYXdzHieu6_DU6jdqSV8lRpSvkRFs&_xt=.css" />
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>-->
+    <!--jquery-3.5.1.slim.min.js-->
+    <script
+            src="https://3425005.app.netsuite.com/core/media/media.nl?id=25767751&c=3425005&h=nmoUUazhbmg9iOdCxP1cYP0CfRG453nCxvUzAPz_3YKIemtW&_xt=.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+    <!--bootstrap.bundle.min.js-->
+    <script
+            src="https://3425005.app.netsuite.com/core/media/media.nl?id=25767755&c=3425005&h=iETIG--2loVPqHRmVJkxetYn0vjF34r3XFCEITrf5kGHmLUO&_xt=.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <!--font-awesome.min.css-->
+    <link rel="stylesheet"
+          href="https://3425005.app.netsuite.com/core/media/media.nl?id=25767752&c=3425005&h=ZLr7BZgzVu1ML120FHS7qzII-c003VR8ScUM4GmMWkLRnq48&_xt=.css">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
+    <!--charts/loader.js-->
+    <script type="text/javascript"
+            src="https://3425005.app.netsuite.com/core/media/media.nl?id=25767754&c=3425005&h=W-r4wG7cjo8OEdDe6gaB2qdjcKMrz6AtE-QcfPv8MAl_qJOV&_xt=.js"></script>
+    <!--<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>-->
+    <!--vue.global.js-->
+    <script
+            src="https://3425005.app.netsuite.com/core/media/media.nl?id=25767753&c=3425005&h=o42Hghv7YFsjXPvPMznrlOntWHcSX2Zg5QzCoLM92p38sr-L&_xt=.js"></script>
+    <!--<script src="https://unpkg.com/vue@3.0.5/dist/vue.global.js"></script>-->
+    <script>
+        function goToTask(){
+            console.log("inn of task head")
+
+            window.open('https://3425005.app.netsuite.com/app/crm/calendar/task.nl?whence=');
+
+        }
+
+
+    </script>
+</head>
+
+<body>
+<style type="text/css">
+    .overlay {
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background: #222;
+        z-index: 9;
+        opacity: 0.6;
+    }
+
+    .overlay__inner {
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
+
+    .overlay__content {
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .spinner {
+        width: 75px;
+        height: 75px;
+        display: inline-block;
+        border-width: 2px;
+        border-color: rgba(255, 255, 255, 0.05);
+        border-top-color: #fff;
+        animation: spin 1s infinite linear;
+        border-radius: 100%;
+        border-style: solid;
+    }
+    .merchandise mt-4{
+        background-size: auto;
+    }
+
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+
+<div class="otgn-main-white-container-main" id="customerDashBoard">
+    <div class="overlay" v-show="showLoader<8">
+        <div class="overlay__inner">
+            <div class="overlay__content"><span class="spinner"></span></div>
+        </div>
+    </div>
+    <div class="otgn-main-title-div">
+        <h1 CLASS="otgn-main-title">OX360 REPORT</h1>
+    </div>
+    <div class="container otgn-inner-grey-container" id="otgn-inner-grey-container"
+         :style="{'max-height': `${2500 + comments.commentSectionHeight + incentive.performanceSectionHeight}px`}">
+        <div class="row">
+            <div class="col-8 text-left pl-5">
+                <img class="profile-user-img" :src="images.profile_user_image">
+                <span class="otgn-sec-title1 pl-2"> #{{salesData.customerName.value}}</span>
+            </div>
+            <div class="col-4 text-right pr-5">
+                <img class="calender-img" :src="images.calendar_image">
+                <span class="otgn-sec-title2 pl-2"> {{salesData.todaysDate.value}}</span>
+            </div>
+        </div>
+        <div class="row mx-3">
+            <div class="col-4 col-xl-4 col-md-6 otgn-main-white-container mt-5 otgn-date-field1">
+                <label for="startdate" class="otgn-datelabel otgn-startdate"> Start Date </label>
+                <input class="ml-3" type="date" id="startdate" name="startdate" v-model="monthCountInPeriod.startDate.value">
+            </div>
+            <div class="col-4 col-xl-4 col-md-6 otgn-main-white-container mt-5 otgn-date-field2">
+                <label for="enddate" class="otgn-datelabel otgn-enddate"> End Date </label>
+                <input class="ml-3" type="date" id="enddate" name="enddate" v-model="monthCountInPeriod.endDate.value">
+            </div>
+            <div class="col-3 col-xl-3 col-md-6 otgn-main-white-container py-3 mt-xl-5 text-right otgn-date-field3">
+                <button type="button" class="filter-btn" @click="triggerDashboardRefresh">Filter</button>
+            </div>
+            <div class="col-1 col-xl-1 col-md-6 otgn-main-white-container py-3 mt-xl-5 otgn-date-field4"
+                 @click="submitTheData" :disabled="disablePrintButton">
+                <img class="otgn-printer-img" :src="images.printer_image">
+            </div>
+        </div>
+        <div class="row otgn-sales-summary-container mx-3 py-4">
+            <div class="col-6">
+                <div class="sales-summary-title-div py-3 px-4 text-center">
+                    <h3 class="sales-summary-title p-0 m-0" style = "text-align: center!important;">Sales Summary</h3>
+                </div>
+                <div class="otgn-sales-sum-white-container py-1">
+                    <div class="row p-3">
+                        <div class="col-6 text-left sales-during-period-title mt-1"> Sales (During Period)</div>
+                        <div class="col-6 text-left sales-during-period-count"> {{new Intl.NumberFormat('en-AU', {
+                            style: 'currency', currency: 'AUD' }).format(salesData.invoiceAmount.value)}}
+                        </div>
+                    </div>
+                    <div class="mx-4 py-2">
+                        <div class="row">
+                            <div class="col-6 py-2 sales-summary-greydiv-container">
+                                <h3 class="sales-during-period-count-sec pb-2">{{new Intl.NumberFormat('en-AU', {
+                                    style:
+                                    'currency', currency: 'AUD' }).format(salesData.estimatedBudget.value)}}</h3>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <img class="target3-img" :src="images.target_image">
+                                    </div>
+                                    <div class="col-6 text-right pr-4">
+                                        <img class="group1-img" v-if="changeInBudgetAndSales<0"
+                                             :src="images.downward_red_tick" />
+                                        <img class="group1-img" v-else :src="images.upward_green_tick" />
+                                        <h3
+                                                :class="{grouponecountred : changeInBudgetAndSales<0, grouponecountgreen: changeInBudgetAndSales>=0}">
+                                            {{changeInBudgetAndSales}}%</h3>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col sales-sum-bottom-txt"> Budget</div>
+                                </div>
+                            </div>
+                            <div class="col-6 py-2 sales-sum-colsec-bg">
+                                <h3 class="sales-during-period-count-sec pb-2"> {{new Intl.NumberFormat('en-AU', {
+                                    style: 'currency', currency: 'AUD'
+                                    }).format(salesData.previousYearInvoiceAmount.value)}}</h3>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <img class="calender2-img" :src="images.calender2_mage">
+                                    </div>
+                                    <div class="col-6 text-right pr-4">
+                                        <img class="group1-img" v-if="changeInSalesBetweenPeriods<0"
+                                             :src="images.downward_red_tick" />
+                                        <img class="group1-img" v-else :src="images.upward_green_tick" />
+                                        <h3
+                                                :class="{grouponecountred : changeInSalesBetweenPeriods<0, grouponecountgreen: changeInSalesBetweenPeriods>=0}">
+                                            {{changeInSalesBetweenPeriods}}%</h3>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col sales-sum-bottom-txt text-center"> Sales (Same Period Last Year)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="sales-summary-title-div py-3 px-4 text-center">
+                    <h3 class="sales-summary-title p-0 m-0">Sales by Product Category</h3>
+                </div>
+                <div id="salesByProductCategory_donutchart" style="width: 510px; height: 500px;"></div>
+            </div>
+            <div class="col-6">
+                <div class="otgn-main-white-container1 py-4 px-3 table-responsive">
+
+                    <table style="margin-left: unset!important;">
+                        <tr>
+                            <th style="text-align:left;">OX Support</th>
+                            <th class="abcd" style="text-align:center;">Completed</th>
+                            <th style="text-align:left;">Details</th>
+                        </tr>
+                        <tr style="border-bottom:1px solid #A5A5A5;">
+                            <td style="padding-top:10px;" colspan="100%"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;">Marketing support</td>
+                            <td class="abcd" style="text-align:center;">
+
+                                <img v-if="false || marketingSupportActivities.marketingSupportProvided.value"
+                                     :src="images.checked_checkbox_image" style="height:15px" />
+
+                                <img v-else :src="images.unchecked_checkbox_image" style="height:15px" />
+                            </td>
+                            <td style="text-align:center;">{{marketingSupportActivities.marketingSupport.value || "---"}}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;">Training</td>
+                            <td class="abcd" style="text-align:center;">
+                                <img v-if="false || trainingtActivities.trainingConducted.value"
+                                     :src="images.checked_checkbox_image" style="height:15px" />
+                                <img v-else :src="images.unchecked_checkbox_image" style="height:15px" />
+                            </td>
+                            <td style="text-align:center;">{{trainingtActivities.trainingProvided.value || "---"}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="merchandise mt-4"
+                     :style="{'background-size':'510px 330px' ,'background-image': `url(${salesData.merchandisingImage.value || images.no_image_found})` }">
+                    <div class="merchandisetext">Merchandising image</div>
+                </div>
+            </div>
+            <div class="col-6 component-weight table-responsive" style="margin-top:35px;">
+                <div class="sales-summary-title-div1 py-3 px-4">
+                    <h3 class="sales-summary-title p-0 m-0" style ="text-align: center!important;">Sales OX360 Component Weighting</h3>
+                </div>
+                <div class="otgn-main-white-container2 py-4 px-3 table-responsive">
+                    <table>
+                        <tr>
+                            <th style="text-align:left;">Area</th>
+                            <th style="text-align:center;">Value</th>
+                            <th style="text-align:center;">Benchmark Score</th>
+                            <th style="text-align:center;">Weighting</th>
+                        </tr>
+                        <tr style="border-bottom:1px solid #A5A5A5;">
+                            <td style="padding-top:10px;" colspan="100%"></td>
+                        </tr>
+
+                        <tr>
+                            <td style="text-align:left;padding-top:10px;">Fill Rate</td>
+                            <td style="text-align:center;padding-top:10px;">
+                                <!-- {{Number(backorderedPercentage).toFixed(2)}}%-->
+                                {{Number(salesData.backorderedPercentage.value).toFixed(2)}}%
+                            </td>
+                            <td style="text-align:center;padding-top:10px;"> {{Number(backorderedBenchmark).toFixed(2)}}%
+                            </td>
+                            <td style="text-align:center;padding-top:10px;">
+                                {{Number(backorderedWeighting)}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;">Credits/Returns</td>
+                            <td style="text-align:center;">
+                                {{Number(salesData.creditReturnsPercentage.value).toFixed(2)}}%
+                            </td>
+                            <td style="text-align:center;">{{Number(creditBenchmark).toFixed(2)}}%
+                            </td>
+                            <td style="text-align:center;">
+                                {{Number(creditWeighting)}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;">Cases</td>
+                            <td style="text-align:center;">
+                                {{Number(customerActivitiesAndCases.countOfOpenCases.value)}}
+                            </td>
+                            <td style="text-align:center;">{{Number(casesBenchmark)}}</td>
+                            <td style="text-align:center;">
+                                {{Number(casesWeighting)}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;">Store Visits</td>
+                            <td style="text-align:center;">
+                                {{Number(customerActivitiesAndCases.activityCount.value)}}
+                            </td>
+                            <td style="text-align:center;">{{Number(mciBenchmark)}}</td>
+                            <td style="text-align:center;">
+                                {{Number(mciWeighting)}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;">Marketing Support</td>
+                            <td style="text-align:center;">{{marketingSupportValue}}</td>
+                            <td style="text-align:center;">{{marketingSupportBenchmark}}
+                            </td>
+                            <td style="text-align:center;">{{Number(marketingSupportWeighting)}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;">Training</td>
+                            <td style="text-align:center;">{{trainingValue}}</td>
+                            <td style="text-align:center;">{{trainingBenchmark}}
+                            </td>
+                            <td style="text-align:center;">
+                                {{Number(trainingWeighting)}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;padding-bottom:50px;">Sales on target</td>
+                            <td style="text-align:center;padding-bottom:50px;">
+                                {{Number(salesData.salesAgainstTarget.value).toFixed(2)}}%
+                            </td>
+                            <td style="text-align:center;padding-bottom:50px;">
+                                {{Number(salesOnTargetBenchmark).toFixed(2)}}%
+                            </td>
+                            <td style="text-align:center;padding-bottom:50px;">
+                                {{Number(salesOnTargetWeighting)}}
+                            </td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #A5A5A5;">
+                            <td style="padding-top:10px;" colspan="100%"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;padding-top:20px">Total</td>
+                            <td style="text-align:center;padding-top:20px">
+                            </td>
+                            <td style="text-align:center;padding-top:20px">
+                            </td>
+                            <td style="text-align:center;padding-top:20px">
+                                {{Number(totalWeight).toFixed(2)}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!-- <div class="topten">Top 10 items purchased</div> -->
+            <div class="col-12 topten">
+                Top 10 Items Purchased
+            </div>
+            <div class="col-6 ">
+                <div class="bar-graph">
+                    <div id="customerPrimaryGroup_bar">
+
+                    </div>
+                    <div><h6 style="color:#5cd65c;font-size:12px; font-weight:bold">Green: Stocked, have reordered in the last 6 months </h6>
+                        <h6 style="color:#FFBF00;font-size:12px;font-weight:bold">Yellow: Stocked, have not reordered in the last 6 months </h6>
+                        <h6 style="color:#e60000;font-size:12px; font-weight:bold">Red: Not stocked in your store </h6>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col-6 eg">
+                <div class="bar-graph" style="height: 456px;">
+                    <div id="topTenItem_bar"></div>
+
+                </div>
+            </div>
+            <!-- //test case -->
+            <!-- <div class="col-12 toptenitems">
+                 Your Top 10 Items Purchased
+             </div>
+             <div class="col-12 ">
+                 <div class="bar-graph">
+                     <div id="topTenItem_bar"></div>
+                 </div>-->
+        </div>
+
+        <div class="container row" :style="{'margin': 'auto','position': 'relative', 'top': '-320px'}"
+             v-show="!!comments.customerFeedback || !!comments.bulkOpportunities ||!!comments.productOpportunities"
+             id="commentSection">
+            <div class="col-12 otgn-main-white-container" style="padding-top: 20px;padding-bottom: 20px;"
+                 v-show="!!comments.customerFeedback">
+                <label style="color: #A5A5A5; font-size: 19px;font-weight: normal;">Customer
+                    Feedback </label><br>
+                <div class="mytext" style="white-space: pre-line;">{{comments.customerFeedback}}</div>
+            </div>
+            <div class="col-12 otgn-main-white-container" style="padding-top: 20px;padding-bottom: 20px;"
+                 v-show="!!comments.bulkOpportunities">
+                <label style="color: #A5A5A5; font-size: 19px;font-weight: normal;">Bulk by
+                    Opportunities </label><br>
+                <div class="mytext" style="white-space: pre-line;">{{comments.bulkOpportunities}}</div>
+            </div>
+            <div class="col-12 otgn-main-white-container" style="padding-top: 20px;padding-bottom: 20px;"
+                 v-show="!!comments.productOpportunities">
+                <label style="color: #A5A5A5; font-size: 19px;font-weight: normal;">Product
+                    Opportunities </label><br>
+                <div class="mytext" style="white-space: pre-line;">{{comments.productOpportunities}}</div>
+            </div>
+        </div>
+
+        <div class="container row" :style="{'margin': 'auto','position': 'relative', 'top': '-320px'}"
+             v-show="!!incentive.performanceIncentive || !!incentive.performanceIncentiveValue || !!salesData.performanceIncentive.value || !!salesData.performanceIncentiveValue.value"
+             id="performanceSection">
+
+            <div class="col-12 otgn-main-white-container" style="padding-top: 20px;padding-bottom: 20px;"
+                 v-show="!!incentive.performanceIncentive|| !!salesData.performanceIncentive.value">
+                <label style="color: #A5A5A5; font-size: 19px;font-weight: normal;">Performance Incentive </label><br>
+                <div class="mytext" style="white-space: pre-line;">{{incentive.performanceIncentive || salesData.performanceIncentive.value}}</div>
+            </div>
+
+            <div class="col-12 otgn-main-white-container" style="padding-top: 20px;padding-bottom: 20px;"
+                 v-show="!!incentive.performanceIncentiveValue || !!salesData.performanceIncentiveValue.value">
+                <label style="color: #A5A5A5; font-size: 19px;font-weight: normal;">Performance Incentive Value </label><br>
+                <div class="mytext" style="white-space: pre-line;">{{incentive.performanceIncentiveValue || salesData.performanceIncentiveValue.value}}</div>
+            </div>
+        </div>
+        <div class="button-row">
+            <div class="col-4">
+                <button id="myBtn1" type="button" class="submit-btn" @click="showModel('myModal1');">Customer
+                    Feedback
+                </button>
+                <div id="myModal1" class="modal1">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Customer Feedback</h3>
+                            <button type="button" class="close1" data-dismiss="myModal1"
+                                    @click="closeModal('myModal1')">&times;
+                            </button>
+                        </div>
+                        <div class="modalcontainer">
+                            <form action="#">
+                                <div class="row">
+                                    <div class="col-12">
+                                                <textarea id="CustomerFeedback" name="CustomerFeedback"
+                                                          v-model="comments.customerFeedback" maxlength="200"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                            <div style="text-align:center;">
+                                <button id="submit1" type="submit" class="submit-form-btn"
+                                        @click="closeModal('myModal1')">Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <button id="myBtn2" type="button" class="submit-btn" @click="showModel('myModal2');">Bulk by
+                    Opportunities
+                </button>
+                <div id="myModal2" class="modal2">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Bulk by Opportunities</h3>
+                            <button type="button" class="close2" data-dismiss="myModal2"
+                                    @click="closeModal('myModal2')">&times;
+                            </button>
+                        </div>
+                        <div class="modalcontainer">
+                            <form action="#">
+                                <div class="row">
+                                    <div class="col-12">
+                                                <textarea id="BulkOpportunities" name="BulkOpportunities"
+                                                          v-model="comments.bulkOpportunities" maxlength="200"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                            <div style="text-align:center;">
+                                <button id="submit2" type="submit" value="Submit" class="submit-form-btn"
+                                        @click="closeModal('myModal2')">Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <button id="myBtn3" type="button" class="submit-btn" @click="showModel('myModal3');">Product
+                    Opportunities
+                </button>
+                <div id="myModal3" class="modal3">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Product Opportunities </h3>
+                            <button type="button" class="close3" id="aa" data-dismiss="myModal3"
+                                    @click="closeModal('myModal3')">&times;
+                            </button>
+                        </div>
+                        <div class="modalcontainer">
+                            <form action="#">
+                                <div class="row">
+                                    <div class="col-12">
+                                                <textarea id="ProductOpportunities" name="ProductOpportunities"
+                                                          v-model="comments.productOpportunities" maxlength="200"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                            <div style="text-align:center;">
+                                <button id="submit3" type="submit" value="Submit" class="submit-form-btn"
+                                        @click="closeModal('myModal3')">Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="button-row2">
+            <div class="col-4">
+                <button id="myBtn4" type="button" class="submit-btn" onclick="goToTask()">Create Event
+                </button>
+
+
+            </div>
+            <div class="col-4">
+                <button id="myBtn5" type="button" class="submit-btn" @click="showModel('myModal5');">Performance Incentive
+                </button>
+                <div id="myModal5" class="modal5">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Update Performance Incentive </h3>
+                            <button type="button" class="close5" id="close5" data-dismiss="myModal5"
+                                    @click="closeModal('myModal5')">&times;
+                            </button>
+                        </div>
+                        <div class="modalcontainer">
+                            <form action="#">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <!-- <label for="performanceincentive">Performance Incentive</label>
+                                                 <textarea id="performanceincentive" name="performanceIncentive"
+                                                           v-model="comments.performanceIncentive" maxlength="200">Performance Incentive</textarea>-->
+
+                                        </br></br>
+                                        <label for="performanceIncentive">Performance Incentive:</label>
+                                        <input type="text" id="performanceIncentive" name="performanceIncentive" v-model="incentive.performanceIncentive" maxlength="200"><br><br>
+                                        <label for="performanceIncentiveValue">Performance Incentive Value:</label>
+                                        <input type="text" id="performanceIncentiveValue" name="performanceIncentiveValue" v-model="incentive.performanceIncentiveValue" maxlength="200"><br><br>
+                                    </div>
+                                </div>
+                            </form>
+                            <div style="text-align:center;">
+                                <button id="submit5" type="submit" value="Submit" class="submit-form-btn"
+                                        @click="closeModal('myModal5')">Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <button id="myBtn6" type="button" class="submit-btn" @click="openPromotionLink(salesData.promotionLink)">Monthly Deals
+                </button>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="otgn-form_submit" hidden>
+    <form action="/app/site/hosting/scriptlet.nl?script=2040&deploy=1" method="post" id="submitform">
+        <input type="text" id="script" name="script" value="2040" hidden>
+        <input type="text" id="deploy" name="deploy" value="1" hidden>
+        <input type="text" id="dataString" name="dataString" hidden>
+        <input type="submit" value="Submit" hidden>
+    </form>
+</div>
+</div>
+<script type="text/javascript">
+    google.charts.load('current', {
+        packages: ['corechart', 'bar']
+    });
+</script>
+
+<script>
+    const customerDashBoard = {
+        data() {
+            return {
+                showLoader: 0,
+                images: {
+                    unchecked_checkbox_image: "https://3425005.app.netsuite.com/core/media/media.nl?id=25767729&c=3425005&h=HRd7f-6fTXHZ9Y7DE0dPFecCc3pC5wS_8zPcy6ew4oEGfrbL",
+                    checked_checkbox_image: "https://3425005.app.netsuite.com/core/media/media.nl?id=25767742&c=3425005&h=ex5o6otaF3-PkOkHG6KWhGwVjgLY-4k1Fg_VRPQO3rAKOEbX",
+                    upward_green_tick: "https://3425005.app.netsuite.com/core/media/media.nl?id=25767748&c=3425005&h=o7PuCxRfDCa44UYPIbeIdzSq8poYTfKHhze9JtNamzCH4CuY",
+                    downward_red_tick: "https://3425005.app.netsuite.com/core/media/media.nl?id=25767740&c=3425005&h=N1tBVbJ_iQf1XHq0mDU6oeIiPSNbernofOhJ96ESH9gT5Ger",
+                    profile_user_image: "https://3425005.app.netsuite.com/core/media/media.nl?id=25767730&c=3425005&h=4ikbPePl1VabbLBxfcpXG07KPo6IFohLScID2kpKMa1Hw_kF",
+                    calendar_image: "https://3425005.app.netsuite.com/core/media/media.nl?id=25767741&c=3425005&h=DsEtBtK1diDCEOiIQuvISw5PUGa62XzjJDCe_kj5PcVd6jqa",
+                    printer_image: "https://3425005.app.netsuite.com/core/media/media.nl?id=25767737&c=3425005&h=fGFtmi7asi8Nbq_C-8X5IE8g4s8_l_k1kqyXTJ_R49E7yOwi",
+                    target_image: "https://3425005.app.netsuite.com/core/media/media.nl?id=25767744&c=3425005&h=ahnqp0d5OFb0J4mddee7kcaf0QUVmWShNr47AQ0I5jYW9ntU",
+                    calender2_mage: "https://3425005.app.netsuite.com/core/media/media.nl?id=25767733&c=3425005&h=9KGdHMjQngJok8dQvi4Tf4bS8fFILPSpC4leukHVZVJJti6s",
+                    no_image_found: "https://3425005.app.netsuite.com/core/media/media.nl?id=25767746&c=3425005&h=KB8pDkizALz6lM4ogoqG--EntbIF9SujWSbaC4ozjkkJa7kX",
+                },
+                ApiUrl: {
+                    getSalesData: "https://3425005.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2039&deploy=1&apiType=getSalesData",
+                    getActivitiesAndCases: "https://3425005.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2039&deploy=1&apiType=getActivitiesAndCases",
+                    getMarketingSupportActivity: "https://3425005.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2039&deploy=1&apiType=getMarketingSupportActivity",
+                    getTrainingActivity: "https://3425005.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2039&deploy=1&apiType=getTrainingActivity",
+
+                    countOfMonthsInSelectedPeriod: "https://3425005.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2039&deploy=1&apiType=countOfMonthsInSelectedPeriod",
+                    getSalesByProductCategory: "https://3425005.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2039&deploy=1&apiType=getSalesByProductCategory",
+                    getSalesByCustomerTopTen: "https://3425005.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2039&deploy=1&apiType=getSalesByCustomerTopTen",
+                    getSalesByCustomerPrimaryGroup: "https://3425005.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2039&deploy=1&deploy=1&apiType=getSalesByCustomerPrimaryGroup",
+                    //getSalesByDistributionChannel: "https://3425005.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2039&deploy=1&apiType=getSalesByDistributionChannel",
+                    generateThePDF: "/app/site/hosting/scriptlet.nl?script=2040&deploy=1"
+                },
+                comments: {
+                    customerFeedback: "",
+                    bulkOpportunities: "",
+                    productOpportunities: "",
+
+                    commentSectionHeight: 0,
+                },
+
+                incentive:{
+                    performanceIncentive:"",
+                    performanceIncentiveValue:"",
+                    performanceSectionHeight:0,
+                },
+                salesData: {},
+                customerActivitiesAndCases: {},
+                monthCountInPeriod: {},
+                marketingSupportActivities: {},
+                trainingtActivities: {},
+                salesByProductCategory: [],
+                SalesByCustomerTopTen: [],
+                salesByCustomerPrimaryGroup: [],
+                salesByDistributionChannel: [],
+                customerId: "",
+                customerPrimaryGroupId: "",
+                subsidiary:"",
+                customerDistributionChannelId: "",
+                disablePrintButton: false,
+                chartsAsImages: {
+                    salesByProductCategory_donutchart: "",
+                    customerPrimaryGroup_bar: "",
+                    //distributionChannel_bar: "",
+                    SalesByCustomerTopTen_bar: "",
+                },
+            }
+        },
+        /**
+         * @description The actions to be done when the VUE JS application is created/initialised
+         */
+        created() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            this.customerId = urlParams.get('customerId');
+            this.customerPrimaryGroupId = urlParams.get('customerPrimaryGroupId');
+            this.subsidiary = urlParams.get('subsidiary');
+            this.customerDistributionChannelId = urlParams.get('customerDistributionChannelId');
+            console.log({
+                customerId: this.customerId,
+                customerPrimaryGroupId: this.customerPrimaryGroupId,
+                customerDistributionChannelId: this.customerDistributionChannelId,
+                subsidiary: this.subsidiary,
+            });
+            this.triggerDashboardRefresh();
+        },
+        /**
+         * @description The computed property are listed in here. ie, these values are derived/calculated from other values
+         */
+        computed: {
+            /**
+             * @description To dynamically calculate the value for 'changeInSalesBetweenPeriods'
+             */
+            changeInSalesBetweenPeriods() {
+                if (this.salesData && this.salesData.previousYearInvoiceAmount.value) {
+                    let previousYearInvoiceAmount = Number(this.salesData.previousYearInvoiceAmount.value || 0);
+                    if (previousYearInvoiceAmount == 0)
+                        return "0.00";
+                    let invoiceAmount = Number(this.salesData.invoiceAmount.value);
+                    return Number((((invoiceAmount - previousYearInvoiceAmount) / previousYearInvoiceAmount) * 100).toFixed(2));
+
+                }
+                return "0.00";
+            },
+            /**
+             * @description To dynamically calculate the value for 'changeInBudgetAndSales'
+             */
+            changeInBudgetAndSales() {
+                if (this.salesData && this.salesData.estimatedBudget.value) {
+                    let estimatedBudget = Number(this.salesData.estimatedBudget.value || 0);
+                    if (estimatedBudget == 0)
+                        return "0.00";
+                    let invoiceAmount = Number(this.salesData.invoiceAmount.value);
+                    return Number((((invoiceAmount - estimatedBudget) / estimatedBudget) * 100).toFixed(2));
+                }
+                return "0.00";
+            },
+            /**
+             * @description To dynamically calculate the value for 'salesOnTargetBenchmark'
+             */
+            salesOnTargetBenchmark() {
+                //the Benchmark to show 100% always
+                return 100;
+            },
+            /**
+             * @description To dynamically calculate the value for 'salesOnTargetWeighting'
+             */
+            salesOnTargetWeighting() {
+                //If the sales are greater than or equal to 100% then weighting will be 10%. Otherwise, the weighting will be 0%
+                return Number(Number(this.salesData.salesAgainstTarget.value).toFixed(2)) >= 100 ? 10 : 0;
+            },
+            /**
+             * @description To dynamically calculate the value for 'backorderedBenchmark'
+             */
+            backorderedBenchmark() {
+                //the Benchmark is 100 - backorder percentage
+                //return Number(100 - Number(this.salesData.backorderedPercentage.value)).toFixed(1);
+                return 98;
+            },
+            backorderedPercentage(){
+                if(this.salesData.backorderedPercentage.value!=""){
+                    return Number(Number(this.salesData.backorderedPercentage.value)).toFixed(2);
+                }
+                else{
+                    return 0;}
+            },
+            /**
+             * @description To dynamically calculate the value for 'backorderedWeighting'
+             */
+            backorderedWeighting() {
+                //the weighting if the backorder value is less than or equal to 2% then weighting will be 20%, otherwise 0% weighting
+                return Number(Number(this.salesData.backorderedPercentage.value).toFixed(2)) <= 2 ? 20 : 0;
+            },
+            /**
+             * @description To dynamically calculate the value for 'creditBenchmark'
+             */
+            creditBenchmark() {
+                //the Benchmark is 1%
+                return 1;
+            },
+            /**
+             * @description To dynamically calculate the value for 'creditWeighting'
+             */
+            creditWeighting() {
+                //If the value of credit/ returns less than or equal to 1% then weighting should be 15%, otherwise 0%
+                return Number(Number(this.salesData.creditReturnsPercentage.value).toFixed(2)) <= 1 ? 15 : 0;
+            },
+            /**
+             * @description To dynamically calculate the value for 'casesBenchmark'
+             */
+            casesBenchmark() {
+                //Benchmark will be always 4
+                //return 4;
+                //return Number(this.customerCount.internalIDs.value);
+                //var totalMonth = Number(this.monthCountInPeriod.monthCount.value);
+                //var totalInternalId = Number(this.customerCount.internalIDs.value);
+                return Number(this.monthCountInPeriod.monthCount.value);
+            },
+            /**
+             * @description To dynamically calculate the value for 'casesWeighting'
+             */
+            casesWeighting() {
+                //If the value is less than or equal to 4, then weighting 15%, otherwise 0%.
+                return Number(Number(this.customerActivitiesAndCases.countOfOpenCases.value).toFixed(2)) <= 4 ? 15 : 0;
+            },
+            /**
+             * @description To dynamically calculate the value for 'mciBenchmark'
+             */
+            mciBenchmark() {
+                //Benchmark will be always 4
+                //return 4;
+                return Number(this.monthCountInPeriod.monthCount.value);
+            },
+            /**
+             * @description To dynamically calculate the value for 'mciWeighting'
+             */
+            mciWeighting() {
+                //If the value is greater than or equal to 4, then weighting 15%, otherwise 0%
+                return Number(Number(this.customerActivitiesAndCases.activityCount.value).toFixed(2)) >= 4 ? 15 : 0;
+            },
+            /**
+             * @description To dynamically calculate the value for 'marketingSupportValue'
+             */
+            marketingSupportValue() {
+                //Yes, if marketing support is checked. Else No
+                if (this.marketingSupportActivities && this.marketingSupportActivities.marketingSupportProvided && (this.marketingSupportActivities.marketingSupportProvided.value == 'T'||this.marketingSupportActivities.marketingSupportProvided.value == true) )
+                {
+                    console.log("marketingSupportActivities INN ====>", this.marketingSupportActivities.marketingSupportProvided.value)
+                    return "Yes";
+                }else{
+                    console.log("marketingSupportActivities ELSE ====>", this.marketingSupportActivities.marketingSupportProvided.value)
+                    return "No";
+                }
+
+            },
+            /**
+             * @description To dynamically calculate the value for 'marketingSupportBenchmark'
+             */
+            marketingSupportBenchmark() {
+                //Benchmark-Yes
+                return "Yes";
+            },
+            /**
+             * @description To dynamically calculate the value for 'marketingSupportWeighting'
+             */
+            marketingSupportWeighting() {
+                //if marketing support is checked then the 15% weighting. Else, 0% weighting.
+                if (this.marketingSupportActivities && this.marketingSupportActivities.marketingSupportProvided && (this.marketingSupportActivities.marketingSupportProvided.value == 'T'|| this.marketingSupportActivities.marketingSupportProvided.value ==true))
+                    return 15;
+                return 0;
+            },
+            /**
+             * @description To dynamically calculate the value for 'trainingValue'
+             */
+            trainingValue() {
+                //Yes, if training conducted is checked. Else No.
+                if (this.trainingtActivities.trainingConducted && this.trainingtActivities.trainingConducted && (this.trainingtActivities.trainingConducted.value == 'T'||this.trainingtActivities.trainingConducted.value == true ))
+                    return "Yes";
+                return "No";
+            },
+            /**
+             * @description To dynamically calculate the value for 'trainingBenchmark'
+             */
+            trainingBenchmark() {
+                //Benchmark-Yes
+                return "Yes";
+            },
+            /**
+             * @description To dynamically calculate the value for 'trainingWeighting'
+             */
+            trainingWeighting() {
+                //if training conducted is checked the 15% weighting. Else, 0% weighting
+                if (this.trainingtActivities && this.trainingtActivities.trainingConducted && (this.trainingtActivities.trainingConducted.value == 'T'||this.trainingtActivities.trainingConducted.value == true ))
+                    return 15;
+                return 0;
+            },
+            /**
+             * @description To dynamically calculate the value for 'industryBenchmark'
+             */
+            industryBenchmark() {
+                return "95.00"
+            },
+            /**
+             * @description To dynamically calculate the value for 'totalWeight'
+             */
+            totalWeight() {
+                const totalWeightParams = {
+                    salesOnTargetWeighting: this.salesOnTargetWeighting,
+                    backorderedWeighting: this.backorderedWeighting,
+                    creditWeighting: this.creditWeighting,
+                    casesWeighting: this.casesWeighting,
+                    mciWeighting: this.mciWeighting,
+                    marketingSupportWeighting: this.marketingSupportWeighting,
+                    trainingWeighting: this.trainingWeighting,
+                }
+                console.log('totalWeightParams', totalWeightParams);
+                return Object.keys(totalWeightParams).reduce((acc, el) => (Number(acc) + (Number(totalWeightParams[el]) || 0)), 0).toFixed(2);
+            },
+            /**
+             * @description To dynamically calculate the value for 'startDate'
+             */
+            startDate() {
+                return this.monthCountInPeriod.startDate.value && (this.monthCountInPeriod.startDate.value).split("-").join();
+            },
+            /**
+             * @description To dynamically calculate the value for 'endDate'
+             */
+            endDate() {
+                return this.monthCountInPeriod.endDate.value && (this.monthCountInPeriod.endDate.value).split("-").join();
+            },
+            /* /!**
+              * @description To dynamically calculate the value for 'customerPrimaryGroupId'
+              *!/
+             customerPrimaryGroupId() {
+                 return this.salesData.customerPrimaryGroupId.value;
+             },
+             /!**
+              * @description To dynamically calculate the value for 'customerDistributionChannelId'
+              *!/
+             customerDistributionChannelId() {
+                 return this.salesData.distributionChannelId.value;
+             },*/
+        },
+        methods: {
+            /**
+             * @description Denotes whether an request to generate PDF in ongoing
+             * @returns {Boolean}
+             */
+            shouldContinue() {
+                return !this.disablePrintButton;
+            },
+            /**
+             * @description Submit the data for the PDF Suitelet to generate the PDF
+             */
+            submitTheData() {
+                console.log('this', JSON.stringify(this));
+                let payloadObj = {
+                    images: this.images,
+                    ApiUrl: this.ApiUrl,
+                    comments: this.comments,
+                    incentive: this.incentive,
+                    dataSets: {
+                        salesData: this.salesData,
+                        customerActivitiesAndCases: this.customerActivitiesAndCases,
+                        marketingSupportActivities: this.marketingSupportActivities,
+                        trainingtActivities: this.trainingtActivities,
+                        salesByProductCategory: this.salesByProductCategory,
+                        salesByCustomerPrimaryGroup: this.salesByCustomerPrimaryGroup,
+                        salesByDistributionChannel: this.salesByDistributionChannel,
+                        SalesByCustomerTopTen: this.SalesByCustomerTopTen,
+
+                        monthCountInPeriod: this.monthCountInPeriod
+                    },
+                    customerId: this.customerId,
+                    customerPrimaryGroupId: this.customerPrimaryGroupId,
+                    subsidiary: this.subsidiary,
+                    customerDistributionChannelId: this.customerDistributionChannelId,
+                    computedProperty: {
+                        changeInSalesBetweenPeriods: this.changeInSalesBetweenPeriods,
+                        changeInBudgetAndSales: this.changeInBudgetAndSales,
+                        salesOnTargetBenchmark: this.salesOnTargetBenchmark,
+                        salesOnTargetWeighting: this.salesOnTargetWeighting,
+                        backorderedPercentage:this.backorderedPercentage,
+                        backorderedBenchmark: this.backorderedBenchmark,
+                        backorderedWeighting: this.backorderedWeighting,
+                        creditBenchmark: this.creditBenchmark,
+                        creditWeighting: this.creditWeighting,
+                        casesBenchmark: this.casesBenchmark,
+                        casesWeighting: this.casesWeighting,
+                        mciBenchmark: this.mciBenchmark,
+                        mciWeighting: this.mciWeighting,
+                        marketingSupportValue: this.marketingSupportValue,
+                        marketingSupportBenchmark: this.marketingSupportBenchmark,
+                        marketingSupportWeighting: this.marketingSupportWeighting,
+                        trainingValue: this.trainingValue,
+                        trainingBenchmark: this.trainingBenchmark,
+                        trainingWeighting: this.trainingWeighting,
+                        industryBenchmark: this.industryBenchmark,
+                        totalWeight: this.totalWeight,
+                        startDate: this.startDate,
+                        endDate: this.endDate
+                    },
+                    chartsAsImages: this.chartsAsImages,
+                };
+                console.log('payloadObj', JSON.stringify(payloadObj));
+
+
+                if (this.shouldContinue()) {
+                    if (confirm("This will submit the data and generate the PDF. \n Please confirm before proceeding")) {
+                        this.disablePrintButton = true;
+                        alert('Submitted the form for generating PDF');
+                        this.generatePDF(payloadObj)
+                    }
+                } else {
+                    alert('Processing the PDF, please wait..');
+                }
+            },
+            /**
+             * @description API call to generate the PDF
+             * @param {Object} payloadObj
+             */
+            generatePDF(payloadObj) {
+                try {
+                    document.getElementById("dataString").value = JSON.stringify(payloadObj);
+                    $("#submitform").trigger('submit');
+                } catch (err) {
+                    this.disablePrintButton = false;
+                    console.error('Error at generatePDF', err);
+                }
+            },
+            /**
+             * @description To dynamiccaly calculate the comment section height
+             */
+            calculateCommentSectionHeight() {
+                const commentSectionDOM = document.getElementById("commentSection");
+                console.log('filterSectionDOM', commentSectionDOM)
+                if (commentSectionDOM && commentSectionDOM.offsetHeight) {
+                    this.comments.commentSectionHeight = commentSectionDOM ? commentSectionDOM.offsetHeight : 0;
+                } else {
+                    this.comments.commentSectionHeight = 0;
+                }
+            },
+
+            /**
+             *
+             * @description To dynamically calculate the performance section height
+             */
+            calculatePerformanceSectionHeight(){
+                const performanceSectionDOM = document.getElementById("performanceSection");
+                console.log('Performance', performanceSectionDOM)
+                if (performanceSectionDOM && performanceSectionDOM.offsetHeight) {
+                    this.incentive.performanceSectionHeight = performanceSectionDOM ? performanceSectionDOM.offsetHeight : 0;
+                } else {
+                    this.incentive.performanceSectionHeight  = 0;
+                }
+                console.log(" this.incentive.performanceSectionHeight ==>", this.incentive.performanceSectionHeight)
+            },
+            /**
+             * @description To make the modal popup visible
+             * @param {String} id - ID of the HTML element
+             */
+            showModel(id) {
+                document.getElementById(id).style.display = 'block';
+                this.calculateCommentSectionHeight();
+                this.calculatePerformanceSectionHeight();
+
+            },
+            /**
+             * @description To make the modal popup invisible
+             * @param {String} id - ID of the HTML element
+             */
+            closeModal(id) {
+                document.getElementById(id).style.display = 'none';
+                this.calculateCommentSectionHeight();
+                this.calculatePerformanceSectionHeight();
+            },
+            openPromotionLink(promotionLink){
+              window.open(promotionLink);
+
+            },
+
+            /**
+             * @description To initiate the refresh DashBoard and the actions necessary to populate the data on it
+             */
+            triggerDashboardRefresh() {
+                if (this.shouldContinue()) {
+                    let startDate = this.monthCountInPeriod && this.monthCountInPeriod.startDate && this.monthCountInPeriod.startDate.value,
+                        endDate = this.monthCountInPeriod && this.monthCountInPeriod.endDate && this.monthCountInPeriod.endDate.value;
+                    console.log({ startDate, endDate });
+
+                    this.showLoader = 0;
+                    this.clearSlate(startDate, endDate);
+                    this.salesByProductCategory_donutchart();
+                    this.customerPrimaryGroup_bar();
+                    //this.distributionChannel_bar();
+                    this.topTenItem_bar();
+
+                    this.fetch_getSalesData();
+                    this.fetch_getActivitiesAndCases();
+                    this.fetch_getMarketingSupportActivity();
+                    this.fetch_getTrainingActivity();
+
+                    this.fetch_countOfMonthsInSelectedPeriod();
+                    this.fetch_getSalesByProductCategory();
+                    this.fetch_getSalesByCustomerPrimaryGroup();
+                    this.fetch_getSalesByDistributionChannel();
+                    this.fetch_getSalesByCustomerTopTen();
+                    this.calculateCommentSectionHeight();
+                    this.calculatePerformanceSectionHeight();
+                } else {
+                    alert('Processing the PDF, please wait..');
+
+                }
+            },
+            /**
+             * @description To clear all the data on the Dashboard
+             */
+            clearSlate(startDate, endDate) {
+                const salesData = {
+                        "customerInternalId": {
+                            "value": "",
+                            "text": ""
+                        },
+                        "invoiceAmount": {
+                            "value": "",
+                            "text": null
+                        },
+                        "backOrderedAmount": {
+                            "value": "",
+                            "text": null
+                        },
+                        "soAmount": {
+                            "value": "",
+                            "text": null
+                        },
+                        "backorderedPercentage": {
+                            "value": "",
+                            "text": null
+                        },
+                        "backorderdWeighting": {
+                            "value": "",
+                            "text": null
+                        },
+                        "creditmemoCount": {
+                            "value": "",
+                            "text": null
+                        },
+                        "creditReturns": {
+                            "value": "",
+                            "text": null
+                        },
+                        "creditReturnsPercentage": {
+                            "value": "",
+                            "text": null
+                        },
+                        "creditReturnsWeighting": {
+                            "value": "",
+                            "text": null
+                        },
+                        "estimatedBudget": {
+                            "value": "",
+                            "text": null
+                        },
+                        "salesAgainstTarget": {
+                            "value": "",
+                            "text": null
+                        },
+                        "salesAgainstTargetWeighting": {
+                            "value": "",
+                            "text": null
+                        },
+                        "previousYearInvoiceAmount": {
+                            "value": "",
+                            "text": null
+                        },
+                        "customerName": {
+                            "value": "",
+                            "text": null
+                        },
+                        "marketingSupportProvided": {
+                            "value": "",
+                            "text": null
+                        },
+                        "marketingSupportValue": {
+                            "value": "",
+                            "text": null
+                        },
+                        "marketingsupportweighting": {
+                            "value": "",
+                            "text": null
+                        },
+                        "trainingConducted": {
+                            "value": "",
+                            "text": null
+                        },
+                        "trainingValue": {
+                            "value": "",
+                            "text": null
+                        },
+                        "trainingWeighting": {
+                            "value": "",
+                            "text": null
+                        },
+                        "merchandisingImage": {
+                            "value": "",
+                            "text": null
+                        },
+                        "merchandisingWeighting": {
+                            "value": "",
+                            "text": null
+                        },
+                        "todaysDate": {
+                            "value": "",
+                            "text": null
+                        },
+                        "startDate": {
+                            "value": startDate || "",
+                            "text": null
+                        },
+                        "endDate": {
+                            "value": endDate || "",
+                            "text": null
+                        },
+                        "lastyearStartdate": {
+                            "value": "",
+                            "text": null
+                        },
+                        "lastyearenddate": {
+                            "value": "",
+                            "text": null
+                        },
+                        "customerPrimaryGroup": {
+                            "value": "",
+                            "text": null
+                        },
+                        "distributionChannel": {
+                            "value": "",
+                            "text": null
+                        },
+                        "customerPrimaryGroupId": {
+                            "value": "",
+                            "text": null
+                        },
+                        "distributionChannelId": {
+                            "value": "",
+                            "text": null
+                        },
+                        "subsidiary": {
+                            "value": "",
+                            "text": null
+                        },
+
+                        "performanceIncentive": {
+                            "value": "",
+                            "text": null
+                        },
+                        "performanceIncentiveValue": {
+                            "value": "",
+                            "text": null
+                        },
+                    "promotionLink" :""
+                    },
+                    customerActivitiesAndCases = {
+                        "customerInternalId": {
+                            "value": "",
+                            "text": ""
+                        },
+                        "activityCount": {
+                            "value": "",
+                            "text": null
+                        },
+                        "totalAcivitySum": {
+                            "value": "",
+                            "text": null
+                        },
+                        "activityWeighting": {
+                            "value": "",
+                            "text": null
+                        },
+                        "casesCount": {
+                            "value": "",
+                            "text": null
+                        },
+                        "countOfOpenCases": {
+                            "value": "",
+                            "text": null
+                        },
+                        "casePercentage": {
+                            "value": "",
+                            "text": null
+                        },
+                        "caseWeighting": {
+                            "value": "",
+                            "text": null
+                        }
+                    },
+                    marketingSupportActivities = {
+                        "dateCreated": {
+                            "value": "",
+                            "text": null
+                        },
+                        "eventTitle": {
+                            "value": "",
+                            "text": null
+                        },
+                        "marketingSupport": {
+                            "value": "",
+                            "text": null
+                        },
+                        "marketingSupportProvided": {
+                            "value": "",
+                            "text": null
+                        }
+                    },
+                    trainingtActivities = {
+                        "dateCreated": {
+                            "value": "",
+                            "text": null
+                        },
+                        "eventTitle": {
+                            "value": "",
+                            "text": null
+                        },
+                        "trainingProvided": {
+                            "value": "",
+                            "text": null
+                        },
+                        "trainingConducted": {
+                            "value": "",
+                            "text": null
+                        }
+                    },
+                    monthCountInPeriod = {
+                        "monthCount": {
+                            "value": "",
+                            "text": null
+                        },
+                        "startDate": {
+                            "value": startDate || "",
+                            "text": null
+                        },
+                        "endDate": {
+                            "value": endDate || "",
+                            "text": null
+                        }
+                    },
+                    salesByProductCategory = [],
+                    salesByCustomerPrimaryGroup = [],
+                    salesByDistributionChannel = [],
+                    SalesByCustomerTopTen = [];
+                this.salesData = salesData,
+                    this.customerActivitiesAndCases = customerActivitiesAndCases,
+                    this.marketingSupportActivities = marketingSupportActivities,
+                    this.trainingtActivities = trainingtActivities,
+
+                    this.monthCountInPeriod = monthCountInPeriod,
+                    this.salesByProductCategory = salesByProductCategory,
+                    this.salesByCustomerPrimaryGroup = salesByCustomerPrimaryGroup,
+                    this.salesByDistributionChannel = salesByDistributionChannel,
+                    this.SalesByCustomerTopTen = SalesByCustomerTopTen,
+                    this.disablePrintButton = false,
+                    this.comments.customerFeedback = '',
+                    this.comments.bulkOpportunities = '',
+                    this.comments.productOpportunities = '',
+                    this.comments.commentSectionHeight = 0;
+                this.incentive.performanceIncentive = '';
+                this.incentive.performanceIncentiveValue='';
+                this.incentive.performanceSectionHeight =0;
+
+            },
+            /**
+             * @description API call to fetch the Sales Data
+             */
+            fetch_getSalesData() {
+                try {
+                    console.log('customerId', this.customerId);
+                    if (this.customerId && Number(this.customerId) && Number.isInteger(Number(this.customerId))) {
+                        console.log('getSalesData',
+                            `${this.ApiUrl.getSalesData}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`
+                        );
+                        fetch(`${this.ApiUrl.getSalesData}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`)
+                            .then(res => res.json())
+                            .then(res => {
+                                this.showLoader = this.showLoader + 1;
+                                if (res.summary.status == "SUCCESS") {
+                                    this.salesData = res.data.salesData;
+                                } else {
+                                    console.error(res);
+                                    alert("Cannot fetch Sales Data due to " + res.summary.reason);
+                                }
+                            })
+                            .catch(err => {
+                                this.showLoader = this.showLoader + 1;
+                                console.error(err);
+                            });
+                    } else {
+                        this.showLoader = this.showLoader + 1;
+                        alert("Customer Not Found");
+                    }
+                    console.log('this.salesData ====>', this.salesData);
+                } catch (err) {
+                    this.showLoader = this.showLoader + 1;
+                    console.error(err);
+                    alert("Cannot fetch Sales Data");
+                }
+            },
+            /**
+             * @description API call to fetch Activities and Cases
+             */
+            fetch_getActivitiesAndCases() {
+                try {
+                    if (this.customerId && Number(this.customerId) && Number.isInteger(Number(this.customerId)) &&  Number.isInteger(Number(this.subsidiary))) {
+                        console.log('getActivitiesAndCases',
+                            `${this.ApiUrl.getActivitiesAndCases}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`
+                        );
+                        fetch(`${this.ApiUrl.getActivitiesAndCases}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`)
+                            .then(res => res.json())
+                            .then(res => {
+                                this.showLoader = this.showLoader + 1;
+                                if (res.summary.status == "SUCCESS") {
+                                    this.customerActivitiesAndCases = res.data.customerActivitiesAndCases;
+                                } else {
+                                    console.error(res);
+                                    alert("Cannot fetch Customer Activities and Cases due to " + res.summary.reason);
+                                }
+                            })
+                            .catch(err => {
+                                this.showLoader = this.showLoader + 1;
+                                console.error(err);
+                            });
+                    } else {
+                        this.showLoader = this.showLoader + 1;
+                    }
+                } catch (err) {
+                    this.showLoader = this.showLoader + 1;
+                    console.error(err);
+                    alert("Cannot fetch Customer Activities and Cases");
+                }
+            },
+            fetch_getMarketingSupportActivity() {
+                try {
+                    if (this.customerId && Number(this.customerId) && Number.isInteger(Number(this.customerId)) &&  Number.isInteger(Number(this.subsidiary))) {
+                        console.log('getMarketingSupportActivity',
+                            `${this.ApiUrl.getMarketingSupportActivity}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`
+                        );
+                        fetch(`${this.ApiUrl.getMarketingSupportActivity}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`)
+                            .then(res => res.json())
+                            .then(res => {
+                                this.showLoader = this.showLoader + 1;
+                                if (res.summary.status == "SUCCESS") {
+                                    this.marketingSupportActivities = res.data.marketingSupportActivities;
+                                } else {
+                                    console.error(res);
+                                    alert("Cannot fetch Marketing Support Activities due to " + res.summary.reason);
+                                }
+                            })
+                            .catch(err => {
+                                this.showLoader = this.showLoader + 1;
+                                console.error(err);
+                            });
+                    } else {
+                        this.showLoader = this.showLoader + 1;
+                    }
+                } catch (err) {
+                    this.showLoader = this.showLoader + 1;
+                    console.error(err);
+                    alert("Cannot fetch Marketing Support Activities");
+                }
+            },
+            fetch_getTrainingActivity() {
+                try {
+                    if (this.customerId && Number(this.customerId) && Number.isInteger(Number(this.customerId)) &&  Number.isInteger(Number(this.subsidiary))) {
+                        console.log('getTrainingActivity',
+                            `${this.ApiUrl.getTrainingActivity}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`
+                        );
+                        fetch(`${this.ApiUrl.getTrainingActivity}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`)
+                            .then(res => res.json())
+                            .then(res => {
+                                this.showLoader = this.showLoader + 1;
+                                if (res.summary.status == "SUCCESS") {
+                                    this.trainingtActivities = res.data.trainingtActivities;
+                                } else {
+                                    console.error(res);
+                                    alert("Cannot fetch Training Activities due to " + res.summary.reason);
+                                }
+                            })
+                            .catch(err => {
+                                this.showLoader = this.showLoader + 1;
+                                console.error(err);
+                            });
+                    } else {
+                        this.showLoader = this.showLoader + 1;
+                    }
+                } catch (err) {
+                    this.showLoader = this.showLoader + 1;
+                    console.error(err);
+                    alert("Cannot fetch Training Activities");
+                }
+            },
+            fetch_countOfMonthsInSelectedPeriod(){
+
+                try{
+                    if (this.customerId && Number(this.customerId) && Number.isInteger(Number(this.customerId)) &&  Number.isInteger(Number(this.subsidiary))) {
+
+                        fetch(`${this.ApiUrl.countOfMonthsInSelectedPeriod}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`)
+                            .then(res => res.json())
+                            .then(res => {
+                                this.showLoader = this.showLoader + 1;
+                                if (res.summary.status == "SUCCESS") {
+                                    this.monthCountInPeriod = res.data.monthCountInPeriod;
+                                } else {
+                                    console.error(res);
+                                    alert("Cannot fetch Month Count " + res.summary.reason);
+                                }
+                            })
+                            .catch(err => {
+                                this.showLoader = this.showLoader + 1;
+                                console.error(err);
+                            });
+                    }
+                    else {
+                        this.showLoader = this.showLoader + 1;
+                    }
+                }
+                catch(err){
+                    this.showLoader = this.showLoader + 1;
+                    console.error(err);
+                    alert("Cannot fetch Month Count");
+                }
+
+            },
+            /**
+             * @description API call to fetch Sales by Product Category
+             */
+            fetch_getSalesByProductCategory() {
+                try {
+                    if (this.customerId && Number(this.customerId) && Number.isInteger(Number(this.customerId))&& Number.isInteger(Number(this.subsidiary))) {
+                        console.log('getSalesByProductCategory',
+                            `${this.ApiUrl.getSalesByProductCategory}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`
+                        );
+                        fetch(`${this.ApiUrl.getSalesByProductCategory}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`)
+                            .then(res => res.json())
+                            .then(res => {
+                                this.showLoader = this.showLoader + 1;
+                                if (res.summary.status == "SUCCESS") {
+                                    this.salesByProductCategory = res.data.salesByProductCategory;
+                                    this.salesByProductCategory_donutchart();
+                                } else {
+                                    console.error(res);
+                                    alert("Cannot fetch Sales By Product Category due to " + res.summary.reason);
+                                }
+                            })
+                            .catch(err => {
+                                this.showLoader = this.showLoader + 1;
+                                console.error(err);
+                            });
+
+                    } else {
+                        this.showLoader = this.showLoader + 1;
+                    }
+                } catch (err) {
+                    this.showLoader = this.showLoader + 1;
+                    console.error(err);
+                    alert("Cannot fetch Sales By Product Category");
+                }
+            },
+            /**
+             * @description API call to fetch Sales by Customer Primary Group
+             */
+            fetch_getSalesByCustomerPrimaryGroup() {
+                console.log('customerPrimaryGroupId', this.customerPrimaryGroupId);
+                try {
+                    if (this.customerId && Number(this.customerId) && Number.isInteger(Number(this.customerId))&&Number.isInteger(Number(this.subsidiary)) && Number.isInteger(Number(this.customerPrimaryGroupId))) {
+                        console.log('getSalesByCustomerPrimaryGroup',
+                            `${this.ApiUrl.getSalesByCustomerPrimaryGroup}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&customerPrimaryGroupId=${this.customerPrimaryGroupId}&subsidiary=${this.subsidiary}`
+                        );
+                        fetch(`${this.ApiUrl.getSalesByCustomerPrimaryGroup}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&customerPrimaryGroupId=${this.customerPrimaryGroupId}&subsidiary=${this.subsidiary}`)
+                            .then(res => res.json())
+                            .then(res => {
+                                this.showLoader = this.showLoader + 1;
+                                if (res.summary.status == "SUCCESS") {
+                                    this.salesByCustomerPrimaryGroup = res.data.salesByCustomerPrimaryGroup;
+                                    this.customerPrimaryGroup_bar();
+                                } else {
+                                    console.error(res);
+                                    alert("Cannot fetch Sales By Customer Primary Group due to " + res.summary.reason);
+                                }
+                            })
+                            .catch(err => {
+                                this.showLoader = this.showLoader + 1;
+                                console.error(err);
+                            });
+
+                    } else {
+                        this.showLoader = this.showLoader + 1;
+                        alert("Cannot find Primary Group for this customer");
+                    }
+                } catch (err) {
+                    this.showLoader = this.showLoader + 1;
+                    console.error(err);
+                    alert("Cannot fetch Sales By Customer Primary Group");
+                }
+            },
+            /**
+             * @description API call to fetch Sales By Customer Distribution Channel
+             */
+            fetch_getSalesByDistributionChannel() {
+                try {
+                    console.log('customerDistributionChannelId', this.customerDistributionChannelId);
+                    if (this.customerId && Number(this.customerId) && Number.isInteger(Number(this.customerId)) && Number.isInteger(Number(this.customerDistributionChannelId)) &&  Number.isInteger(Number(this.customerId))) {
+                        console.log('getSalesByDistributionChannel',
+                            `${this.ApiUrl.getSalesByDistributionChannel}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&customerDistributionChannelId=${this.customerDistributionChannelId}&subsidiary=${this.subsidiary}`
+                        );
+                        fetch(`${this.ApiUrl.getSalesByDistributionChannel}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&customerDistributionChannelId=${this.customerDistributionChannelId}&subsidiary=${this.subsidiary}`)
+                            .then(res => res.json())
+                            .then(res => {
+                                this.showLoader = this.showLoader + 1;
+                                if (res.summary.status == "SUCCESS") {
+                                    this.salesByDistributionChannel = res.data.salesByDistributionChannel;
+                                    //this.distributionChannel_bar();
+                                } else {
+                                    console.error(res);
+                                    alert("Cannot fetch Sales By Distribution Channel due to " + res.summary.reason);
+                                }
+                            })
+                            .catch(err => {
+                                this.showLoader = this.showLoader + 1;
+                                console.error(err);
+                            });
+
+                    } else {
+                        this.showLoader = this.showLoader + 1;
+                        alert("Cannot find Distribution Channel for this customer");
+                    }
+                } catch (err) {
+                    this.showLoader = this.showLoader + 1;
+                    console.error(err);
+                    alert("Cannot fetch Sales By Distribution Channel");
+                }
+            },
+            /**
+             * @description API call to fetch Sales By Customer's Top Ten bought Items
+             */
+            fetch_getSalesByCustomerTopTen() {
+                try {
+                    if (this.customerId && Number(this.customerId) && Number.isInteger(Number(this.customerId)) &&  Number.isInteger(Number(this.customerId))) {
+                        console.log('getSalesByCustomerTopTen',
+                            `${this.ApiUrl.getSalesByCustomerTopTen}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`
+                        );
+                        fetch(`${this.ApiUrl.getSalesByCustomerTopTen}&customerId=${this.customerId}&startDate=${this.startDate}&endDate=${this.endDate}&subsidiary=${this.subsidiary}`)
+                            .then(res => res.json())
+                            .then(res => {
+                                this.showLoader = this.showLoader + 1;
+                                if (res.summary.status == "SUCCESS") {
+                                    this.SalesByCustomerTopTen = res.data.SalesByCustomerTopTen;
+                                    this.topTenItem_bar();
+                                } else {
+                                    console.error(res);
+                                    alert("Cannot fetch Sales By top 10 items " + res.summary.reason);
+                                }
+                            })
+                            .catch(err => {
+                                this.showLoader = this.showLoader + 1;
+                                console.error(err);
+                            });
+
+                    } else {
+                        this.showLoader = this.showLoader + 1;
+                    }
+                } catch (err) {
+                    this.showLoader = this.showLoader + 1;
+                    console.error(err);
+                    alert("Cannot fetch Sales By top 10 items");
+                }
+            },
+            /**
+             * @description To generate the Product Category Donut Chart
+             */
+            salesByProductCategory_donutchart() {
+
+
+                google.charts.setOnLoadCallback(() => {
+
+                    let data = this.salesByProductCategory.reduce((acc, el, i) => {
+                        return acc.push([el.primaryGroup.value, Number(el.salesByProductCategory.value), Number(el.previousYearAmount.value)]), acc;
+
+                    }, [
+                        ['primaryGroup', 'Current Period', 'Same Period LY' ]
+
+
+                    ]);
+                    console.log('salesByProductCategory_donutchart data', data);
+
+
+                    /* var data = new google.visualization.arrayToDataTable([
+                         ['Galaxy', 'Current Period', 'Same Period LY'],
+                         ['Demolition Tools', 23.3, 56.3],
+                         ['Concreting Tools', 34.9, 24.5],
+                         ['Hand Tools', 39.7, 14.3],
+                         ['Diamond Tools', 20.2, 27.5],
+
+                     ]);*/
+                    let options = {
+
+                        chart: {
+                            title: 'Nearby galaxies',
+                            subtitle: 'distance on the left, brightness on the right'
+                        },
+                        bars: 'horizontal', // Required for Material Bar Charts.
+                        series: {
+                            0: { axis: 'Current Period' },
+                            1: { axis: 'Same Period LY' },
+
+                        },
+
+                        axes: {
+                            x: {
+
+
+                            }
+                        },
+                        chartArea: {
+                            width: '59%',
+                            height: '80%'
+                        },
+
+                    };
+
+                    let chart = new google.visualization.BarChart(document.getElementById('salesByProductCategory_donutchart'));
+                    google.visualization.events.addListener(chart, 'ready', () => {
+                        this.chartsAsImages.salesByProductCategory_donutchart = chart.getImageURI()
+                    });
+                    // chart.draw(data, options);
+                    chart.draw(google.visualization.arrayToDataTable(data), options);
+
+                });
+
+                /*google.charts.setOnLoadCallback(() => {
+                    let data = this.salesByProductCategory.reduce((acc, el, i) => {
+                        return acc.push([el.primaryGroup.value, Number(el.salesByProductCategory.value), ' Purchases:' + new Intl.NumberFormat('en-AU', {
+                            style: 'currency',
+                            currency: 'AUD'
+                        }).format(el.salesByProductCategory.value)]), acc;
+
+                    }, [
+                        ['primaryGroup', 'sales', { type: 'string', role: 'tooltip' }]
+                    ]);
+                    console.log('salesByProductCategory_donutchart data', data)
+
+
+                    let options = {
+                        tooltip: { isHtml: true },
+                        sliceVisibilityThreshold: 0.001,
+                        legend: {
+                            position: "left",
+                            alignment: "start",
+                            maxLines: 4,
+                            floating: "true",
+                            textStyle: { fontSize: 13 }
+                        },
+                        width: 800,
+                        bars: 'horizontal',
+                        series: {
+                             0: { axis: 'Current Period' },
+                             1: { axis: 'Same Period LY' }
+                       },
+
+
+                        pieHole: 0.6,
+                        pieSliceText: "percentage",
+                        pieSliceTextStyle: {
+                            color: 'white',
+                        },
+                        //width:540,
+                        //chartArea: { left: 10, top: 10, width: '95%', height: '100%' }
+                    };
+                    let chart = new google.visualization.PieChart(document.getElementById('salesByProductCategory_donutchart'));
+                    google.visualization.events.addListener(chart, 'ready', () => {
+                        this.chartsAsImages.salesByProductCategory_donutchart = chart.getImageURI()
+                    });
+                    chart.draw(google.visualization.arrayToDataTable(data), options);
+
+
+                });*/
+            },
+            /**
+             * @description To generate the Customer Primary Group Bar Chart
+             */
+            customerPrimaryGroup_bar() {
+                google.charts.setOnLoadCallback(() => {
+                    let data = this.salesByCustomerPrimaryGroup.reduce((acc, el, i) => {
+                        return acc.push([el.item.text, Number(el.fxamount.value), el.Color.value, el.salesdescription.value]), acc;
+
+                    }, [
+                        ['Item', 'Revenue',{role: 'style'}, { type: 'string', role: 'annotation' }]
+                    ]);
+                    console.log('customerPrimaryGroup_bar data', data);
+
+                    let options = {
+                        tooltip: { isHtml: true },
+                        legend: 'none',
+                        title: 'Customers in your Buying Group',
+                        /*JJ0016 Added*/
+                        annotations: {
+
+                            textStyle: {
+                                color: '#222222'
+                            },
+                        },
+
+                        chartArea: {
+                            width: '59%',
+                            height: '80%'
+                        },
+                        titleTextStyle: {
+                            color: '#636772',
+                            fontSize: '19'
+                        },
+                        bar: {
+                            groupWidth: "40%"
+                        },
+                        height: 400,
+
+                        hAxis: {
+                            title: '',
+                            textStyle: {
+                                color: '#222222',
+                                fontName: "Open Sans"
+                            },
+                            minValue: 0,
+                            gridlines: {
+                                color: 'transparent'
+                            },
+                            textPosition: 'none'
+                        },
+                        vAxis: {
+                            title: '',
+                            textStyle: {
+                                color: '#222222',
+                                fontName: "Open Sans"
+                            },
+                            gridlines: {
+                                color: 'transparent'
+                            }
+                        },
+                        colors: ['#00A0EE']
+
+                    };
+                    let chart = new google.visualization.BarChart(document.getElementById('customerPrimaryGroup_bar'));
+                    google.visualization.events.addListener(chart, 'ready', () => {
+                        this.chartsAsImages.customerPrimaryGroup_bar = chart.getImageURI()
+                    });
+                    chart.draw(google.visualization.arrayToDataTable(data), options);
+                });
+            },
+            /**
+             * @description To generate the Distribution Channel Bar Chart
+             */
+            /*distributionChannel_bar() {
+                google.charts.setOnLoadCallback(() => {
+                    let data = this.salesByDistributionChannel.reduce((acc, el, i) => {
+                        return acc.push([el.item.text, Number(el.fxamount.value), el.salesdescription.value]), acc;
+                    }, [
+                        ['Item', 'Revenue', { type: 'string', role: 'tooltip' }]
+                    ]);
+                    console.log('distributionChannel_bar data', data);
+
+                    let options = {
+                        tooltip: { isHtml: true },
+                        legend: 'none',
+                        title: 'Customers in your Industry',
+                        chartArea: {
+                            width: '59%',
+                            height: '80%'
+                        },
+                        titleTextStyle: {
+                            color: '#636772',
+                            fontSize: '19'
+                        },
+                        bar: {
+                            groupWidth: "40%"
+                        },
+                        height: 400,
+                        hAxis: {
+                            title: '',
+                            minValue: 0,
+                            textStyle: {
+                                color: '#222222',
+                                fontName: "Open Sans"
+                            },
+                            gridlines: {
+                                color: 'transparent'
+                            },
+                            textPosition: 'none'
+                        },
+                        vAxis: {
+                            title: '',
+                            textStyle: {
+                                color: '#222222',
+                                fontName: "Open Sans"
+                            },
+                            gridlines: {
+                                color: 'transparent'
+                            }
+                        },
+                        colors: ['#00A0EE']
+
+                    };
+                    let chart = new google.visualization.BarChart(document.getElementById('distributionChannel_bar'));
+                    google.visualization.events.addListener(chart, 'ready', () => {
+                        this.chartsAsImages.distributionChannel_bar = chart.getImageURI()
+                    });
+                    chart.draw(google.visualization.arrayToDataTable(data), options);
+                });
+            },*/
+            /**
+             * @description To generate the Top Ten Items Bought by Revenue Bar Chart
+             */
+            topTenItem_bar() {
+                google.charts.setOnLoadCallback(() => {
+                    let data = this.SalesByCustomerTopTen.reduce((acc, el, i) => {
+                        return acc.push([el.item.text, Number(el.fxamount.value), el.salesdescription.value]), acc;
+                    }, [
+                        ['Item', 'Sales', { type: 'string', role: 'annotation' }]
+                    ]);
+                    console.log('topTenItem_bar data', data);
+
+                    let options = {
+                        tooltip: { isHtml: true },
+                        legend: 'none',
+                        title: 'Your Top 10 Items Purchased',
+                        chartArea: {
+                            width: '59%',
+                            height: '80%'
+                        },
+                        titleTextStyle: {
+                            color: '#636772',
+                            fontSize: '19'
+                        },
+                        bar: {
+                            groupWidth: "40%"
+                        },
+                        height: 400,
+                        hAxis: {
+                            title: '',
+                            textStyle: {
+                                color: '#222222',
+                                fontName: "Open Sans"
+                            },
+                            minValue: 0,
+                            gridlines: {
+                                color: 'transparent'
+                            },
+                            textPosition: 'none',
+
+                        },
+                        vAxis: {
+                            title: '',
+                            textStyle: {
+                                color: '#222222',
+                                fontName: "Open Sans"
+                            },
+                            gridlines: {
+                                color: 'transparent'
+                            }
+                        },
+                        /*JJ0016 Added */
+                        annotations: {
+
+                            textStyle: {
+                                color: '#222222'
+                            },
+                        },
+                        colors: ['#00A0EE']
+
+                    };
+                    let chart = new google.visualization.BarChart(document.getElementById('topTenItem_bar'));
+                    google.visualization.events.addListener(chart, 'ready', () => {
+                        this.chartsAsImages.SalesByCustomerTopTen_bar = chart.getImageURI()
+                    });
+                    chart.draw(google.visualization.arrayToDataTable(data), options);
+                });
+            },
+
+        }
+    }
+
+
+    let xyz = Vue.createApp(customerDashBoard).mount('#customerDashBoard');
+</script>
+<style>
+    .otgn-sales-sum-white-container {
+        background-color: #FFFFFF;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .sales-sum-colsec-bg {
+        background: #ECECEC;
+    }
+
+    .sales-sum-bottom-txt {
+        color: #98999A;
+        font-size: 15px;
+        font-weight: normal;
+    }
+
+    .calender2-img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .grouponecountred {
+        font-size: 23px;
+        font-weight: normal;
+        color: #FF4600;
+    }
+
+    .grouponecountgreen {
+        font-size: 23px;
+        font-weight: normal;
+        color: #1DAC44;
+    }
+
+    .target3-img {
+        width: 62px;
+        height: 62px;
+    }
+
+    .group1-img {
+        width: 33px;
+        height: 33px;
+    }
+
+    .sales-during-period-count-sec {
+        color: #8A8787;
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .sales-summary-greydiv-container {
+        background-color: #F2F2F2;
+    }
+
+    .sales-during-period-title {
+        color: #00A0EE;
+        font-size: 19px;
+        font-weight: normal;
+    }
+
+    .sales-during-period-count {
+        font-size: 24px;
+        font-weight: bold;
+        color: #000000;
+    }
+
+    body {
+        font-family: Open Sans;
+        background-color: white;
+    }
+
+    .otgn-main-white-container {
+        background-color: white;
+
+    }
+
+    .otgn-main-title-div {
+        text-align: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .otgn-main-title {
+        color: #00A0EE;
+        font-weight: bold;
+        font-size: 50px;
+    }
+
+    .otgn-inner-grey-container {
+        /* width: 1600px;
+    text-align: center; */
+        background-color: #f1f1f1;
+        /* margin: auto; */
+        /*  border-radius: 6px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        padding-top: 50px;
+        /* padding-bottom: 50px; */
+        /*max-height: 2000px;*/
+    }
+
+    .otgn-sec-title1 {
+        text-align: left;
+        color: #000000;
+        font-size: 20px;
+        font-weight: bold;
+        vertical-align: bottom;
+    }
+
+    .otgn-sec-title2 {
+        text-align: right;
+        color: #000000;
+        font-size: 20px;
+        font-weight: bold;
+        vertical-align: sub;
+    }
+
+    .profile-user-img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .calender-img {
+        width: 23px;
+        height: 23px;
+    }
+
+    input {
+        border: 1px solid #CBCBCB;
+        /* border-radius: 2px; JJ0016 Commented OTGA-1254 */
+        border-radius: 1px;
+        background-color: #f8f8f8;
+        outline: none;
+        font-size: 19px;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        /*background-image: url('https://3425005-sb1.app.netsuite.com/core/media/media.nl?id=24621021&c=3425005_SB1&h=hi_oN5Yb1blagSubdE06Zv9PHhhJyqktBoJxBrUIUDR5HWqb');*/
+        /*background-image: url('assets/images/calendar.png');*/
+        opacity: 0.4;
+        width: 15px;
+        height: 15px;
+    }
+
+    .otgn-datelabel {
+        color: #808485;
+        font-size: 12px;
+        font-weight: normal;
+    }
+
+    .otgn-date-field1 {
+        padding-left: 35px;
+        padding-top: 19px;
+        padding-bottom: 19px;
+    }
+
+    .otgn-date-field2 {
+        padding-top: 19px;
+        padding-bottom: 19px;
+    }
+
+    .otgn-date-field3 {
+
+        padding-top: 19px;
+        padding-bottom: 19px;
+    }
+
+    .otgn-date-field4 {
+        padding-top: 19px;
+        padding-bottom: 19px;
+    }
+
+    .filter-btn {
+        background-color: #00A0EE;
+        /*border-radius: 5px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        border: 1px solid #00A0EE;
+        font-weight: normal;
+        font-size: 14px;
+        padding: 8px 80px;
+        color: #fff;
+        outline: none;
+    }
+
+    .filter-btn:hover,
+    .filter-btn:focus {
+        outline: none;
+    }
+
+    .otgn-printer-img {
+        width: 33px;
+        height: 33px;
+    }
+
+    .sales-summary-title {
+        color: #FFFFFF;
+        font-weight: normal;
+        font-size: 22px;
+    }
+
+    .sales-summary-title-div {
+        background: #00a0ee;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+
+    @media (min-width: 1200px) {
+        .abcd {
+            /*padding-left: 90px;*/
+            padding-right: 90px;
+            max-width: 200px;
+        }
+    }
+
+    .otgn-main-white-container1 table {
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .otgn-main-white-container1 th {
+        color: #A5A5A5;
+        font-size: 15px;
+        font-weight: 300;
+
+    }
+
+    .otgn-main-white-container1 td {
+        font-size: 14px;
+        font-weight: 300;
+        padding-top: 20px;
+    }
+
+    .otgn-main-white-container1 {
+        background-color: white;
+        /*border-radius: 10px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        position: relative;
+        top: -238px;
+    }
+
+    .merchandise {
+        width: 510px;
+        height: 330px;
+        /*border-radius: 10px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: relative;
+    }
+
+    .merchandisetext {
+        color: #00A0EE;
+        font-size: 26px;
+        font-weight: bold;
+        text-align: center;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        background: white;
+    }
+
+    .sales-summary-title-div1 {
+        background: #00a0ee;
+        /* border-top-left-radius: 10px;
+         border-top-right-radius: 10px; jj0016 otga-1254*/
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+
+    }
+
+    .component-weight {
+        position: relative;
+        top: -402px;
+    }
+
+    .component-weight th {
+        padding-left: 25px;
+    }
+
+    .component-weight td {
+        padding-left: 25px;
+    }
+
+    .otgn-main-white-container2 {
+        background-color: white;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .otgn-main-white-container2 th {
+        color: #A5A5A5;
+        font-size: 15px;
+        font-weight: 300;
+    }
+
+    .otgn-main-white-container2 td {
+        font-size: 14px;
+        font-weight: 300;
+
+    }
+
+    .topten {
+        background: #00a0ee;
+        /* border-radius: 10px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        color: #FFFFFF;
+        text-align: center;
+        height: 60px;
+        padding: 8px;
+        font-size: 26px;
+        font-weight: bold;
+        position: relative;
+        bottom: 380px;
+    }
+
+    .toptenitems {
+        background: #00a0ee;
+        /*border-radius: 10px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        color: #FFFFFF;
+        text-align: center;
+        height: 60px;
+        padding: 8px;
+        font-size: 26px;
+        font-weight: bold;
+        position: relative;
+        bottom: 300px;
+        margin-bottom: 72px;
+    }
+
+    .bar-graph {
+        position: relative;
+        bottom: 350px;
+        /* border-radius: 10px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        background: white;
+    }
+
+    .button-row {
+        width: 104%;
+        float: left;
+        display: inline-flex;
+        position: relative;
+        top: -267px;
+        margin: auto;
+    }
+
+    .button-row2 {
+        width: 104%;
+        float: left;
+        display: inline-flex;
+        position: relative;
+        top: -232px;
+        margin: auto;
+       /* margin-left: 18%;*/
+    }
+
+    .submit-btn {
+        background-color: #00A0EE;
+        /*border-radius: 5px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        border: 1px solid #00A0EE;
+        font-weight: normal;
+        font-size: 14px;
+        padding: 8px 80px;
+        color: #fff;
+        outline: none;
+        width: 310px;
+        height: 60px;
+    }
+
+    .submit-btn {
+        font-size: 18px;
+        white-space: nowrap;
+
+    }
+
+    .submit-btn:hover,
+    .submit-btn:active,
+    .submit-btn:focus {
+        outline: none;
+    }
+
+    .modal1 {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        padding-top: 100px;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: #0000008c;
+        /* Fallback color */
+
+    }
+
+    .modal2 {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        padding-top: 100px;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: #0000008c;
+        /* Fallback color */
+
+    }
+
+    .modal3 {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        padding-top: 100px;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: #0000008c;
+        /* Fallback color */
+
+    }
+
+    /* Modal 5 updated by JJ0016 for OTGA-1271*/
+    .modal5 {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        padding-top: 100px;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: #0000008c;
+        /* Fallback color */
+
+    }
+
+    /* Modal Content */
+    .modal-content {
+        background-color: #F1F1F1;
+        margin: auto;
+        border: 1px solid #888;
+        width: 30%;
+        height: auto;
+        /* border-radius: 20px;  JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+    }
+
+    /* The Close Button */
+    .close1 {
+        /* color: #aaaaaa; */
+        color: white;
+        float: right;
+        font-size: 30px;
+        font-weight: bold;
+        text-align: right;
+        /* margin-right:70px; */
+        background: none;
+        border: none;
+        margin-top: -10px;
+    }
+
+    .close2 {
+        /* color: #aaaaaa; */
+        color: white;
+        float: right;
+        font-size: 30px;
+        font-weight: bold;
+        text-align: right;
+        /* margin-right:70px; */
+        background: none;
+        border: none;
+        margin-top: -10px;
+    }
+
+    .close3 {
+        /* color: #aaaaaa; */
+        color: white;
+        float: right;
+        font-size: 30px;
+        font-weight: bold;
+        text-align: right;
+        /* margin-right:70px; */
+        background: none;
+        border: none;
+        margin-top: -10px
+    }
+    .close5 {
+        /* color: #aaaaaa; */
+        color: white;
+        float: right;
+        font-size: 30px;
+        font-weight: bold;
+        text-align: right;
+        /* margin-right:70px; */
+        background: none;
+        border: none;
+        margin-top: -10px
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /*  input[type=text],*/
+    input[type=select],
+    textarea {
+        width: 100%;
+        border: 1px solid #707070;
+        /* border-radius: 5px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        resize: vertical;
+        height: 200px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding: 5px;
+    }
+    input[type=text]{
+        width: 100%;
+        border: 1px solid #707070;
+        /* border-radius: 5px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        resize: vertical;
+        /*height: 200px;*/
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding: 5px;
+
+    }
+
+    input[type=text]:hover,
+    input[type=text]:focus {
+        outline: none;
+    }
+
+    .modal-header {
+        background: #00A0EE;
+        color: #FFFFFF;
+        /* border-top-left-radius: 10px; */
+        /* border-top-right-radius: 10px; */
+        font-size: 30px;
+        height: 50px;
+
+
+    }
+
+    .modal-header h3 {
+        font-size: 20px;
+        text-align: center;
+        margin: auto;
+        font-family: Open Sans;
+    }
+
+    .submit-form-btn {
+        background-color: #00A0EE;
+        /* border-radius: 5px; JJ0016 Commented OTGA-1254 */
+        border-radius: 3px;
+        border: 1px solid #00A0EE;
+        font-weight: normal;
+        font-size: 40px;
+        padding: 8px 30px;
+        color: #fff;
+        outline: none;
+        /* width: 600px;
+        height: 80px; */
+        font-size: 15px;
+        white-space: nowrap;
+        text-align: center;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+
+    .submit-form-btn:hover,
+    .submit-form-btn:active,
+    .submit-form-btn:focus {
+        outline: none;
+    }
+
+    .modalcontainer {
+        width: 80%;
+        margin: auto;
+    }
+
+    .mytext {
+        width: auto;
+        word-wrap: break-word;
+
+    }
+</style>
+</body>
+
+</html>
